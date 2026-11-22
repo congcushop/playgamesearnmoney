@@ -92,9 +92,9 @@
     if (!error && data) {
       window.PGEM.balance = data;
       $$("[data-balance-coins]").forEach((el) => (el.textContent = fmtCoins(data.available_coins)));
-      $$("[data-balance-usd]").forEach((el) => (el.textContent = "$" + coinsToUsd(data.available_coins)));
+      $$("[data-balance-usd]").forEach((el) => (el.textContent = coinsToUsd(data.available_coins)));
       $$("[data-level-name]").forEach((el) => (el.textContent = data.level_name || "Rookie"));
-      $$("[data-level-max]").forEach((el) => (el.textContent = "$" + (data.max_withdraw_usd || 5)));
+      $$("[data-level-max]").forEach((el) => (el.textContent = "$" + (data.max_withdraw_usd || 10)));
     }
   }
   window.PGEM.loadBalance = loadBalance;

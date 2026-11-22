@@ -37,7 +37,7 @@
         note.textContent = "Complete offers inside the wall. Coins credit automatically when an offer is verified — games can take a few days to credit.";
       } else {
         host.appendChild(pendingCard("Offer wall is being connected",
-          "The Offerwall.GG placement is being set up. Meanwhile, try surveys and trials below — they credit the same way."));
+          "The Offerwall.GG placement is being set up. Meanwhile, try surveys, trials and the other ways to earn from the menu — they credit the same way."));
       }
       tabGg.classList.add("bg-violet-600", "text-white");
       tabGg.classList.remove("bg-white", "text-slate-700");

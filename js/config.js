@@ -6,8 +6,8 @@
 //
 // Coin economy (LOCKED — do not change without the owner's order):
 //   1,000 coins = $1 | user gets 60% of offerwall value | site keeps 40%
-//   Withdrawal: $5 PayPal / $1 crypto (LTC/USDT)
-//   NO "first $5 in 1 hour" promise anywhere. Payouts are gradual:
+//   Withdrawal: $10 PayPal / $3 crypto (LTC/USDT)
+//   NO "first $10 in 1 hour" promise anywhere. Payouts are gradual:
 //   levels + batch payouts 2x/week (Tue/Fri) + first-withdrawal hold.
 // ============================================================================
 
@@ -49,8 +49,8 @@ window.PGEM_CONFIG = {
     // (= 60% user share). Set this exact number in the Offerwall.GG
     // dashboard when creating the placement.
     offerwallGgCoinsPerDollar: 600,
-    minWithdrawPaypalUsd: 5,
-    minWithdrawCryptoUsd: 1,
+    minWithdrawPaypalUsd: 10,
+    minWithdrawCryptoUsd: 3,
     signupBonusCoins: 250,    // $0.25 — LOCKED until first offer completes
     checkinBaseCoins: 50,     // daily check-in base
     checkinStreakBonus: 10,   // +10 per consecutive day, cap below
@@ -61,9 +61,9 @@ window.PGEM_CONFIG = {
     firstWithdrawHoldHours: 48,
     // Levels: [minLifetimeEarnedUsd, minOffersCompleted, maxWithdrawUsd]
     levels: [
-      { level: 1, name: "Rookie",   minEarnedUsd: 0,  minOffers: 0,  maxWithdrawUsd: 5 },
-      { level: 2, name: "Player",   minEarnedUsd: 10, minOffers: 5,  maxWithdrawUsd: 10 },
-      { level: 3, name: "Pro",      minEarnedUsd: 50, minOffers: 20, maxWithdrawUsd: 25 },
+      { level: 1, name: "Rookie",   minEarnedUsd: 0,  minOffers: 0,  maxWithdrawUsd: 10 },
+      { level: 2, name: "Player",   minEarnedUsd: 10, minOffers: 5,  maxWithdrawUsd: 25 },
+      { level: 3, name: "Pro",      minEarnedUsd: 50, minOffers: 20, maxWithdrawUsd: 50 },
     ],
     dailyPayoutCapUsd: 500,   // total payouts per batch day (admin can raise)
     payoutBatchDays: [2, 5],  // Tue + Fri (0=Sun). Batches processed by admin.
@@ -124,7 +124,7 @@ window.PGEM_CONFIG = {
   // iframe, or the withdrawal flow; ads live only in sidebar/content
   // slots and the dismissible bottom anchor banner.
   // Each entry: status "pending-account" until the dashboard tag is pasted.
-  // The loader (js/ads.js) injects a tag ONLY when its id is filled in.
+  // The loader (loadAds in js/core.js) injects a tag ONLY when its id is filled in.
   ads: {
     // --- LIVE AT LAUNCH (Phase 1) ---
     infolinks: {

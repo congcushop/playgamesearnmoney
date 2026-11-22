@@ -96,6 +96,9 @@
       const amount = Number(amountInp.value);
       const dest = destInp.value.trim();
       if (!amount || amount <= 0) { window.PGEM.toast("Enter an amount.", false); return; }
+      const minUsd = methodSel.value === "paypal" ? CFG.coins.minWithdrawPaypalUsd : CFG.coins.minWithdrawCryptoUsd;
+      if (amount < minUsd) { window.PGEM.toast("Minimum withdrawal is $" + minUsd + " via " + (methodSel.value === "paypal" ? "PayPal" : "crypto") + ".", false); return; }
+      if (amount > lp.cur.maxWithdrawUsd) { window.PGEM.toast("Your level (" + lp.cur.name + ") allows up to $" + lp.cur.maxWithdrawUsd + " per withdrawal. Level up to withdraw more.", false); return; }
       if (!dest) { window.PGEM.toast("Enter your payout destination.", false); return; }
       const r = await window.PGEM.callFn("request-withdrawal", {
         method: methodSel.value, amount_usd: amount, destination: dest,
