@@ -22,10 +22,16 @@ body { font-family: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", 
 /* --- Hero gradient (bright, playful) --- */
 .hero-gradient {
   background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #ec4899 70%, #f97316 100%);
+  background-color: #7c3aed;
 }
 .hero-pattern {
-  background-image: radial-gradient(rgba(255,255,255,.22) 1.5px, transparent 1.5px);
-  background-size: 22px 22px;
+  /* Dots layered ON TOP of the gradient: background-image here must include
+     the gradient again, otherwise it overrides .hero-gradient's gradient
+     (same specificity, later in the file) and the hero falls back to the
+     near-white body background with invisible white text. */
+  background-image: radial-gradient(rgba(255,255,255,.22) 1.5px, transparent 1.5px), linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #ec4899 70%, #f97316 100%);
+  background-size: 22px 22px, cover;
+  background-color: #7c3aed;
 }
 
 /* --- Game-like cards --- */
