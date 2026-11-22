@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In / Sign Up — PlayGamesEarnMoney</title>
+  <meta name="description" content="Log in or create your free PlayGamesEarnMoney account. Start earning coins from game offers, surveys and trials — 1,000 coins = $1.">
+  <link rel="canonical" href="https://playgamesearnmoney.com/login.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PlayGamesEarnMoney">
+  <meta property="og:title" content="Log In / Sign Up — PlayGamesEarnMoney">
+  <meta property="og:description" content="Log in or create your free account. Start earning coins — 1,000 coins = $1.">
+  <meta property="og:url" content="https://playgamesearnmoney.com/login.html">
+  <meta property="og:image" content="https://playgamesearnmoney.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237c3aed'/%3E%3Ctext x='32' y='44' font-size='36' font-family='Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/core.js" defer></script>
+  <script src="js/login.js" defer></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="max-w-md mx-auto px-4 py-10">
+    <div class="earn-card p-6 sm:p-8">
+      <div class="text-center">
+        <div class="text-4xl">🎮</div>
+        <h1 id="form-title" class="text-2xl font-black mt-2">Welcome back!</h1>
+        <p id="form-sub" class="text-slate-500 text-sm mt-1">Log in to your coins.</p>
+      </div>
+
+      <div class="flex gap-2 mt-6">
+        <button id="tab-login" class="chip active flex-1 justify-center">Log in</button>
+        <button id="tab-signup" class="chip flex-1 justify-center">Sign up</button>
+      </div>
+
+      <form id="auth-form" class="mt-5 space-y-3">
+        <div>
+          <label class="text-sm font-bold" for="email">Email</label>
+          <input id="email" type="email" class="input-play mt-1" placeholder="you@example.com" required autocomplete="email">
+        </div>
+        <div>
+          <label class="text-sm font-bold" for="password">Password</label>
+          <input id="password" type="password" class="input-play mt-1" placeholder="At least 8 characters" required autocomplete="current-password" minlength="8">
+        </div>
+        <div id="ref-row" class="hidden">
+          <label class="text-sm font-bold" for="refcode">Referral code (optional)</label>
+          <input id="refcode" type="text" class="input-play mt-1" placeholder="e.g. AB12CD">
+        </div>
+        <div id="turnstile-host"></div>
+        <p id="auth-error" class="text-sm text-red-600 font-semibold hidden"></p>
+        <button id="auth-submit" type="submit" class="btn-play w-full">Log in →</button>
+      </form>
+
+      <p class="text-xs text-slate-400 mt-4 text-center">
+        18+ only. One account per person. By continuing you agree to our
+        <a class="underline" href="terms.html">Terms</a> and
+        <a class="underline" href="privacy.html">Privacy Policy</a>.
+      </p>
+      <p id="ref-note" class="text-xs text-violet-600 font-bold mt-2 text-center hidden"></p>
+    </div>
+
+    <div class="earn-card p-5 mt-5">
+      <h2 class="font-extrabold">New here? You get:</h2>
+      <ul class="text-sm text-slate-600 mt-2 space-y-1 list-disc list-inside">
+        <li><strong>250 bonus coins</strong> when you sign up (unlocks after your first offer).</li>
+        <li>Game offers up to <strong>$50+</strong>, surveys from $0.30, trials from $1.</li>
+        <li>Cash out from <strong>$5 PayPal</strong> or <strong>$1 crypto</strong>.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

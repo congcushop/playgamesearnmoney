@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Payout Proofs — Users Actually Paid | PlayGamesEarnMoney</title>
+  <meta name="description" content="Every payout on this wall is a real one paid to a real user. No fake screenshots, no made-up numbers — just actual PayPal and crypto withdrawals.">
+  <link rel="canonical" href="https://playgamesearnmoney.com/proof.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PlayGamesEarnMoney">
+  <meta property="og:title" content="Real Payout Proofs — Users Actually Paid">
+  <meta property="og:description" content="Every payout on this wall is a real one paid to a real user. No fake screenshots.">
+  <meta property="og:url" content="https://playgamesearnmoney.com/proof.html">
+  <meta property="og:image" content="https://playgamesearnmoney.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237c3aed'/%3E%3Ctext x='32' y='44' font-size='36' font-family='Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/core.js" defer></script>
+  <script src="js/proof.js" defer></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-black">💸 Real payout proofs</h1>
+    <p class="text-slate-500 mt-1">Every payout below is a <strong>real withdrawal paid to a real user</strong>. Usernames are masked for privacy. We never post fake proofs — when the first payout happens, it shows up here automatically.</p>
+
+    <div class="grid grid-cols-3 gap-3 mt-6">
+      <div class="stat-bubble"><div class="num" id="proof-total-paid">$0</div><div class="text-xs font-bold text-slate-500">TOTAL PAID OUT</div></div>
+      <div class="stat-bubble"><div class="num" id="proof-count">0</div><div class="text-xs font-bold text-slate-500">PAYOUTS</div></div>
+      <div class="stat-bubble"><div class="num" id="proof-biggest">$0</div><div class="text-xs font-bold text-slate-500">BIGGEST PAYOUT</div></div>
+    </div>
+
+    <div id="proof-list" class="mt-6 space-y-3"></div>
+
+    <div class="text-center mt-10">
+      <a href="login.html?mode=signup" class="btn-play">Start earning — be the next proof →</a>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+  <div id="anchor-banner" class="hidden">
+    <div class="max-w-6xl mx-auto px-2 py-1 flex items-center gap-2">
+      <div data-ad-slot="adsterra-banner" class="flex-1 min-h-[50px] flex items-center justify-center text-xs text-slate-400"></div>
+      <button data-action="close-anchor" class="text-slate-400 hover:text-slate-600 text-lg leading-none px-2" aria-label="Close ads">✕</button>
+    </div>
+  </div>
+  <div id="push-optin" class="hidden earn-card p-4">
+    <p class="font-extrabold">🔔 Get notified about new high-paying offers?</p>
+    <p class="text-sm text-slate-500 mt-1">Only when a big game offer drops. No spam, turn off anytime.</p>
+    <div class="flex gap-2 mt-3">
+      <button data-action="push-allow" class="btn-play !py-2 !px-4 text-sm">Yes, notify me</button>
+      <button data-action="push-deny" class="btn-soft !py-2 !px-4 text-sm">No thanks</button>
+    </div>
+  </div>
+</body>
+</html>
