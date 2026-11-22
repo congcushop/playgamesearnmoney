@@ -1,0 +1,139 @@
+/* ==========================================================================
+   PlayGamesEarnMoney — playful, SliceThePie-like design system.
+   Bright, game-like, clear earning cards + progress bars.
+   Tailwind (CDN) does the layout; this file adds the personality:
+   gradients, chunky cards, coin shine, level progress, playful buttons.
+   ========================================================================== */
+
+:root {
+  --violet: #7c3aed;
+  --violet-dark: #5b21b6;
+  --pink: #ec4899;
+  --amber: #f59e0b;
+  --teal: #14b8a6;
+  --green: #22c55e;
+  --ink: #1e1b2e;
+  --card-shadow: 0 6px 24px rgba(124, 58, 237, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: #faf7ff; }
+
+/* --- Hero gradient (bright, playful) --- */
+.hero-gradient {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #ec4899 70%, #f97316 100%);
+}
+.hero-pattern {
+  background-image: radial-gradient(rgba(255,255,255,.22) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+/* --- Game-like cards --- */
+.earn-card {
+  background: #fff;
+  border: 2px solid #ede9fe;
+  border-radius: 1.25rem;
+  box-shadow: var(--card-shadow);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.earn-card:hover { transform: translateY(-3px); border-color: #c4b5fd; box-shadow: 0 12px 32px rgba(124, 58, 237, .2); }
+
+.reward-pill {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 1px solid #fcd34d; color: #92400e;
+  font-weight: 800; border-radius: 9999px; padding: .2rem .7rem; font-size: .85rem;
+}
+.reward-pill.big { font-size: 1.05rem; padding: .35rem 1rem; }
+
+.coin { display: inline-block; animation: coin-bob 2.4s ease-in-out infinite; }
+@keyframes coin-bob { 0%,100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-4px) rotate(6deg); } }
+
+/* --- Buttons: chunky, game-like --- */
+.btn-play {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: #fff; font-weight: 800; border-radius: 9999px;
+  padding: .8rem 1.8rem; box-shadow: 0 6px 0 rgba(91, 33, 182, .9), 0 10px 20px rgba(124, 58, 237, .35);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.btn-play:hover { transform: translateY(-2px); }
+.btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(91, 33, 182, .9); }
+.btn-soft {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  background: #fff; border: 2px solid #e9d5ff; color: #7c3aed; font-weight: 700;
+  border-radius: 9999px; padding: .6rem 1.4rem; transition: all .15s ease;
+}
+.btn-soft:hover { background: #f5f3ff; border-color: #c4b5fd; }
+
+/* --- Progress bars (levels, streaks, goals) --- */
+.progress-track {
+  height: 12px; border-radius: 9999px; background: #ede9fe; overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.08);
+}
+.progress-fill {
+  height: 100%; border-radius: 9999px;
+  background: linear-gradient(90deg, #7c3aed, #ec4899, #f59e0b);
+  transition: width .6s ease;
+}
+.progress-fill.green { background: linear-gradient(90deg, #14b8a6, #22c55e); }
+
+/* --- Level badge --- */
+.level-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: linear-gradient(135deg, #7c3aed, #a855f7); color: #fff;
+  font-weight: 800; font-size: .8rem; border-radius: 9999px; padding: .25rem .75rem;
+  box-shadow: 0 3px 10px rgba(124, 58, 237, .4);
+}
+
+/* --- Category chips --- */
+.chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  border-radius: 9999px; padding: .45rem 1rem; font-weight: 700; font-size: .9rem;
+  background: #fff; border: 2px solid #e9d5ff; color: #4c1d95; cursor: pointer;
+  transition: all .15s ease;
+}
+.chip:hover { border-color: #c4b5fd; }
+.chip.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+
+/* --- Sticky anchor banner (ads) --- */
+#anchor-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: #fff; border-top: 2px solid #ede9fe;
+  box-shadow: 0 -6px 24px rgba(0,0,0,.08);
+}
+
+/* --- Push opt-in bar --- */
+#push-optin {
+  position: fixed; left: 1rem; right: 1rem; bottom: 5.5rem; z-index: 40;
+  max-width: 28rem; margin: 0 auto;
+}
+
+/* --- Offer tiles --- */
+.offer-tile { position: relative; overflow: hidden; }
+.offer-tile::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(124,58,237,.08));
+  pointer-events: none;
+}
+.stat-bubble {
+  background: #fff; border: 2px solid #ede9fe; border-radius: 1rem;
+  box-shadow: var(--card-shadow); text-align: center; padding: .9rem .5rem;
+}
+.stat-bubble .num { font-size: 1.5rem; font-weight: 800; color: #7c3aed; line-height: 1.1; }
+
+/* --- Inputs --- */
+.input-play {
+  width: 100%; border: 2px solid #e9d5ff; border-radius: .9rem;
+  padding: .7rem 1rem; font-weight: 600; background: #fff; outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.input-play:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, .15); }
+
+/* --- Step dots (how it works) --- */
+.step-num {
+  width: 2.6rem; height: 2.6rem; border-radius: 9999px;
+  display: grid; place-items: center; font-weight: 800; font-size: 1.1rem; color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, .35); flex-shrink: 0;
+}
