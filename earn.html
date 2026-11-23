@@ -36,20 +36,28 @@
         <h1 class="text-3xl font-black">🎮 Earn — game offers &amp; more</h1>
         <p class="text-slate-500 mt-1">Games pay the most (up to $50+). Surveys &amp; trials credit fastest. Pick your style.</p>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2" data-user-only>
         <span class="level-badge">Level <span data-level-name>Rookie</span></span>
         <a href="wallet.html" class="reward-pill big"><span class="coin">🪙</span> <span data-balance-coins>…</span> coins</a>
       </div>
     </div>
 
     <!-- Daily check-in -->
-    <div class="earn-card mt-6 p-4 flex flex-wrap items-center gap-3">
+    <div class="earn-card mt-6 p-4 flex flex-wrap items-center gap-3" data-user-only>
       <div class="text-2xl">📅</div>
       <div class="flex-1 min-w-[200px]">
         <p class="font-extrabold">Daily check-in</p>
-        <p class="text-sm text-slate-500">Come back every day — 50 coins today, +10 per streak day (up to 100).</p>
+        <p class="text-sm text-slate-500">One check-in a day, shared across our 3 sites — claim it here for 50 coins, +10 per streak day (up to 100). The exact amount is shown when you claim.</p>
       </div>
-      <button id="checkin-btn" class="btn-play !py-2 !px-5 text-sm">Check in +50 🪙</button>
+      <button id="checkin-btn" class="btn-play !py-2 !px-5 text-sm">Check in today 🪙</button>
+    </div>
+    <div class="earn-card mt-6 p-4 flex flex-wrap items-center gap-3" data-guest-only>
+      <div class="text-2xl">📅</div>
+      <div class="flex-1 min-w-[200px]">
+        <p class="font-extrabold">Daily check-in</p>
+        <p class="text-sm text-slate-500">One check-in a day, shared across our 3 sites — free coins every day, plus a 7-day streak bonus.</p>
+      </div>
+      <a href="login.html" class="btn-play !py-2 !px-5 text-sm">Log in to check in</a>
     </div>
 
     <!-- Category chips -->

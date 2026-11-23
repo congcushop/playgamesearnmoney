@@ -7,13 +7,13 @@
   <meta name="theme-color" content="#7c3aed">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Refer Friends — Earn 5% Forever | PlayGamesEarnMoney</title>
-  <meta name="description" content="Invite friends and earn 5% of everything they earn, forever — paid from our share, never from theirs. Share your referral link and watch your coins grow.">
+  <title>Refer Friends — Earn 10% Forever | PlayGamesEarnMoney</title>
+  <meta name="description" content="Invite friends and earn 10% of everything they earn, forever — paid from our share, never from theirs. Share your referral link and watch your coins grow.">
   <link rel="canonical" href="https://playgamesearnmoney.com/referrals.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="PlayGamesEarnMoney">
-  <meta property="og:title" content="Refer Friends — Earn 5% Forever">
-  <meta property="og:description" content="Invite friends and earn 5% of everything they earn, forever — paid from our share, never from theirs.">
+  <meta property="og:title" content="Refer Friends — Earn 10% Forever">
+  <meta property="og:description" content="Invite friends and earn 10% of everything they earn, forever — paid from our share, never from theirs.">
   <meta property="og:url" content="https://playgamesearnmoney.com/referrals.html">
   <meta property="og:image" content="https://playgamesearnmoney.com/assets/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -31,19 +31,20 @@
   <div id="site-header"></div>
 
   <main class="max-w-4xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-black">👥 Refer friends, earn 5% forever</h1>
-    <p class="text-slate-500 mt-1">Every friend who joins with your link earns you <strong>5% of everything they earn</strong> — paid from our share, never from theirs. No cap, no expiry.</p>
+    <h1 class="text-3xl font-black">👥 Refer friends, earn 10% forever</h1>
+    <p class="text-slate-500 mt-1">Every friend who joins with your link earns you <strong>10% of everything they earn</strong> — paid from our share, never from theirs. No cap, no expiry.</p>
 
     <div class="hero-gradient hero-pattern rounded-3xl p-6 sm:p-8 mt-6 text-white">
       <p class="font-bold text-white/80 text-sm">YOUR REFERRAL LINK</p>
-      <div class="flex flex-wrap gap-2 mt-2">
+      <div class="flex flex-wrap gap-2 mt-2" data-user-only>
         <input id="ref-link" readonly class="flex-1 min-w-[220px] rounded-full px-4 py-2.5 font-bold text-slate-800" value="">
         <button id="copy-ref" class="btn-play !bg-white !text-violet-700" style="background:#fff;color:#6d28d9">Copy link</button>
       </div>
-      <p class="text-white/75 text-sm mt-3">Your code: <strong id="ref-code" class="text-yellow-300">…</strong> · Share it anywhere — Reddit, TikTok, Discord, group chats. (No spam, no fake claims.)</p>
+      <p class="text-white/75 text-sm mt-3" data-user-only>Your code: <strong id="ref-code" class="text-yellow-300">…</strong> · Share it anywhere — Reddit, TikTok, Discord, group chats. (No spam, no fake claims.)</p>
+      <p class="text-white/75 text-sm mt-3" data-guest-only>Log in to get your personal referral link.</p>
     </div>
 
-    <div class="grid grid-cols-3 gap-3 mt-6">
+    <div class="grid grid-cols-3 gap-3 mt-6" data-user-only>
       <div class="stat-bubble"><div class="num" id="ref-count">0</div><div class="text-xs font-bold text-slate-500">FRIENDS JOINED</div></div>
       <div class="stat-bubble"><div class="num" id="ref-earned-coins">0</div><div class="text-xs font-bold text-slate-500">REFERRAL COINS</div></div>
       <div class="stat-bubble"><div class="num" id="ref-earned-usd">$0.00</div><div class="text-xs font-bold text-slate-500">REFERRAL VALUE</div></div>
@@ -53,13 +54,13 @@
       <h2 class="font-extrabold text-lg">How it works</h2>
       <ul class="text-sm text-slate-600 mt-2 space-y-1 list-disc list-inside">
         <li>Your friend signs up with your link and completes offers.</li>
-        <li>You get 5% of their offer earnings as coins — automatically, forever.</li>
-        <li>Your friend loses nothing: the 5% comes from the site's share.</li>
+        <li>You get 10% of their offer earnings as coins — automatically, forever.</li>
+        <li>Your friend loses nothing: the 10% comes from the site's share.</li>
         <li>Fake referrals, self-referrals and bot signups are banned and forfeit balances.</li>
       </ul>
     </div>
 
-    <div class="earn-card mt-6 p-6">
+    <div class="earn-card mt-6 p-6" data-user-only>
       <h2 class="font-extrabold text-lg">Recent referral earnings</h2>
       <div id="ref-list" class="mt-3"></div>
     </div>

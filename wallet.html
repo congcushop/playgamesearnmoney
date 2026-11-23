@@ -30,7 +30,11 @@
 <body>
   <div id="site-header"></div>
 
-  <main class="max-w-6xl mx-auto px-4 py-8">
+  <div class="max-w-6xl mx-auto px-4 py-8" data-guest-only>
+    <p class="text-slate-500">Please <a class="text-violet-600 font-bold underline" href="login.html">log in</a> to see your wallet.</p>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 py-8" data-user-only>
     <h1 class="text-3xl font-black">💰 Your wallet</h1>
 
     <!-- Balance hero -->
