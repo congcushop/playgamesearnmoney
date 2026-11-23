@@ -1,0 +1,1 @@
+importScripts('https://feldot.com/v1/sw-import.js?h=waWQiOjEyNDMzNzYsInNpZCI6MTgzMzczNCwid2lkIjo3NTIyOTYsInNyYyI6MiwicG0iOjAsIm10IjowfQ==eyJ&d=playgamesearnmoney.com');
