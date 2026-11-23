@@ -66,7 +66,12 @@
   let sessionReady = false;
 
   async function refreshSession() {
-    if (!sb) return null;
+    if (!sb) {
+      // Backend not configured: still reveal guest content (the CSS auth
+      // gating hides [data-user-only]/[data-guest-only] until .auth-ready).
+      document.body.classList.add("auth-ready");
+      return null;
+    }
     const { data } = await sb.auth.getSession();
     window.PGEM.user = (data && data.session && data.session.user) || null;
     if (window.PGEM.user) {
@@ -81,6 +86,11 @@
       } catch (e) { /* storage unavailable — referral code already lost, not fatal */ }
     }
     sessionReady = true;
+    // Round-2 FOUC fix: reveal auth-dependent content ONLY once the
+    // session is known (and, for logged-in users, the balance is loaded
+    // via loadProfile above) — never flash "…" or login links first.
+    document.body.classList.add("auth-ready");
+    document.body.classList.toggle("auth-logged-in", !!window.PGEM.user);
     renderAuthArea();
     return window.PGEM.user;
   }
@@ -435,8 +445,12 @@
       btn.disabled = true;
       btn.textContent = "Checked in ✓ +" + data.coins_awarded + " coins";
     } else {
+      // Round-2 (bug 3): never promise a fixed amount on the button — the
+      // credited amount depends on which site claims first and on the
+      // streak (game: 50 + 10/streak-day, cap 100). The toast after a
+      // successful claim shows the real amount.
       btn.disabled = false;
-      btn.textContent = "Check in +" + CFG.coins.checkinBaseCoins + " 🪙";
+      btn.textContent = "Check in today 🪙";
     }
   }
   window.PGEM.refreshCheckinState = refreshCheckinState;
@@ -445,6 +459,10 @@
   // Session FIRST, header second: the header must never show the logged-out
   // links to a logged-in user (or vice versa) while the session loads.
   document.addEventListener("DOMContentLoaded", async () => {
+    // Safety net: if the session check hangs (CDN down), show guest
+    // content after 6s instead of leaving auth-gated content hidden
+    // forever. Normal loads resolve the session well before this fires.
+    setTimeout(() => document.body.classList.add("auth-ready"), 6000);
     renderHeader(); // loading state ("…") until the session is known
     renderFooter();
     await refreshSession();

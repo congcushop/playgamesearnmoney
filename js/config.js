@@ -57,7 +57,7 @@ window.PGEM_CONFIG = {
     checkinMaxCoins: 100,
     musicCoinsPerSession: 5,  // music zone: 5 coins / 15 min, cap below
     musicDailyCapCoins: 20,
-    referralRate: 0.05,       // referrer earns 5% of referral's offer earnings
+    referralRate: 0.10,       // referrer earns 10% of referral's offer earnings
     firstWithdrawHoldHours: 48,
     // Levels: [minLifetimeEarnedUsd, minOffersCompleted, maxWithdrawUsd]
     levels: [

@@ -22,7 +22,7 @@
     if (ref) {
       $("#refcode").value = ref;
       const n = $("#ref-note");
-      n.textContent = "You were invited! Sign up with code " + ref + " — your friend earns 5% of your earnings (from our share, never yours).";
+      n.textContent = "You were invited! Sign up with code " + ref + " — your friend earns 10% of your earnings (from our share, never yours).";
       n.classList.remove("hidden");
     }
     const next = params.get("next") || "earn.html";

@@ -15,7 +15,10 @@
     const sb = window.PGEM.sb;
     const user = window.PGEM.user;
     if (!sb || !user) return;
-    await sb.from("gpt_cashback_clicks").insert({
+    // Canonical table (see shared/fix-lifetime-earned.sql): the old
+    // gpt_cashback_clicks table only existed in the retired site #1-only
+    // schema, never in the shared backend.
+    await sb.from("cashback_clicks").insert({
       user_id: user.id, store_name: storeName, url,
     });
   }
