@@ -44,17 +44,29 @@
     // --- TheoremReach ---
     const trBtn = $("#tr-open");
     trBtn.addEventListener("click", async () => {
-      if (!CFG.theoremreach.apiKey) {
+      if (!CFG.theoremreach || !CFG.theoremreach.apiKey) {
         pendingMsg($("#tr-host"), "TheoremReach is being connected",
           "The TheoremReach publisher account is being set up. Try CPX or the offer wall meanwhile.");
         return;
       }
+      // BUG FIX (23/11): window.open() AFTER an await loses the click's
+      // user gesture, so the popup blocker silently ate the new tab —
+      // three clicks, no tab, no error, no message. (CPX worked because
+      // it injects an iframe in-page, never a popup.) Open the tab
+      // synchronously first, then point it at the router URL once the
+      // edge function returns it.
+      trBtn.disabled = true; trBtn.textContent = "Loading TheoremReach…";
+      const win = window.open("", "_blank", "noopener");
       const r = await window.PGEM.callFn("survey-url", { router: "theoremreach" });
       if (r.error || !r.url) {
+        if (win) win.close();
         window.PGEM.toast("Could not open TheoremReach right now: " + (r.error || "unknown error"), false);
+        trBtn.disabled = false; trBtn.textContent = "Open TheoremReach surveys →";
         return;
       }
-      window.open(r.url, "_blank", "noopener");
+      if (win) win.location.href = r.url;
+      else window.location.href = r.url; // popup blocked outright — same-tab fallback
+      trBtn.disabled = false; trBtn.textContent = "Open TheoremReach surveys →";
     });
   }
 
