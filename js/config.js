@@ -114,7 +114,7 @@ window.PGEM_CONFIG = {
   //   (publishers.theoremreach.com) — HMAC-secured, same edge function.
   theoremreach: {
     status: "pending-account",
-    apiKey: "",                 // publishable key for the entry link
+    apiKey: "d1468fd504854886df26440df7ce",                 // publishable key for the entry link
     // Secret key stays server-side (Supabase secret THEOREMREACH_SECRET).
   },
 
