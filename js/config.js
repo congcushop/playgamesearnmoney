@@ -186,16 +186,49 @@ window.PGEM_CONFIG = {
     },
   },
 
-  // --- Cashback shopping (Phase 2 — now installed) ---------------------------
-  // Affiliate programs pay 5–10% commission; part is shared with the user
-  // as coins. Stores are config-driven; the list starts EMPTY (honest
-  // "coming soon" state) until real affiliate deals are signed — never
-  // show fake deals. Join: Rakuten Advertising, Impact, Awin, ShareASale.
+  // --- Cashback shopping (LIVE 23 Nov 2026 — 6 stores, 7 approvals) -----------
+  // Real approved affiliate deals (Impact + Rakuten, account "SaaS Pilot
+  // Hub"). commissionPct = the STORE's commission; the user gets 50% of
+  // it as coins (userShareOfCommission), per the "How cashback works"
+  // copy on cashback.html. Rates are the approved offer rates — never
+  // invent a rate or a tracking link.
+  // Wondershare is approved on BOTH networks at 30% (Impact Brand 59772
+  // AND Rakuten MID 37160 / Offer 2137962) — ONE card, using the Rakuten
+  // deep link, because the Impact tracking URL needs an {Ad ID} chosen
+  // per asset in the Impact dashboard ("Get Tracking Link" panel) and no
+  // Ad ID is on file. Swap in the Impact link once an asset Ad ID is
+  // picked. Do NOT invent an Ad ID.
+  // Rakuten homepage deep links use offerid={Group Offer ID} with NO
+  // .<product-id> suffix (that suffix is for product links only); the
+  // destination homepage goes in the URL-encoded murl param.
   cashback: {
-    status: "code-ready",
+    status: "live",
     userShareOfCommission: 0.5, // user gets 50% of the affiliate commission as coins
     stores: [
-      // { name: "Example Store", url: "https://...", commissionPct: 5, category: "Fashion" }
+      { name: "Wondershare", category: "Software", commissionPct: 30,
+        desc: "Video, PDF & data tools — Dr.Fone Full Toolkit $139.95, Recoverit $79.99, MobileTrans $54.99.",
+        network: "Rakuten + Impact",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=2137962&type=2&murl=https%3A%2F%2Fwww.wondershare.com" },
+      { name: "Keeper Security", category: "Security Software", commissionPct: 10,
+        desc: "Password manager & cybersecurity for families and teams. 10% base, up to $5 per action.",
+        network: "Rakuten",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=2065364&type=2&murl=https%3A%2F%2Fwww.keepersecurity.com" },
+      { name: "Waterdrop Filter", category: "Home & Kitchen", commissionPct: 8,
+        desc: "Reverse-osmosis & gravity water filters for clean drinking water.",
+        network: "Rakuten",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=1888875&type=2&murl=https%3A%2F%2Fwww.waterdropfilter.com" },
+      { name: "Easy Plumbing", category: "Home & Garden", commissionPct: 5,
+        desc: "KOHLER & Moen fixtures, faucets, sinks and bath furniture.",
+        network: "Rakuten",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=1898982&type=2&murl=https%3A%2F%2Fwww.easyplumbing.com" },
+      { name: "KitchenAid", category: "Appliances", commissionPct: 2,
+        desc: "Stand mixers & major kitchen appliances.",
+        network: "Rakuten", badge: "Ends 7 Dec 2026",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=1972089&type=2&murl=https%3A%2F%2Fwww.kitchenaid.com" },
+      { name: "Paw.com", category: "Pet Supplies", commissionPct: 2,
+        desc: "Pet beds, carriers & accessories.",
+        network: "Rakuten",
+        url: "https://click.linksynergy.com/link?id=%2fg%2fjHJaZtI4&offerid=1783560&type=2&murl=https%3A%2F%2Fwww.paw.com" },
     ],
   },
 

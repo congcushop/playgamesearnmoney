@@ -1,7 +1,9 @@
 // cashback.html — config-driven store list.
-// The list starts EMPTY on purpose: no fake deals. Real affiliate stores
-// are added in js/config.js once deals are signed (Rakuten / Impact /
-// Awin / ShareASale). Clicks are logged (own rows only) for reporting.
+// Live stores are in js/config.js cashback.stores (approved Impact /
+// Rakuten deals only — never show fake deals). Each store: { name, url,
+// commissionPct (the STORE's commission; the user gets 50% of it as
+// coins), category, desc, network, badge? }. Clicks are logged (own
+// rows only) for reporting.
 (function () {
   "use strict";
   const CFG = window.PGEM_CONFIG;
@@ -42,12 +44,19 @@
     }
     host.innerHTML = stores.map((s, i) => `
       <a href="${escapeHtml(s.url)}" data-store="${i}" target="_blank" rel="sponsored nofollow noopener" class="earn-card offer-tile p-5 block">
-        <div class="flex items-center justify-between">
-          <h3 class="font-extrabold text-lg">${escapeHtml(s.name)}</h3>
-          <span class="reward-pill">Up to ${escapeHtml(s.commissionPct)}% back</span>
+        <div class="flex items-center gap-3">
+          <span class="flex-none w-11 h-11 rounded-xl bg-violet-600 text-white font-black text-xl flex items-center justify-center">${escapeHtml(String(s.name || "?").charAt(0))}</span>
+          <div class="min-w-0">
+            <h3 class="font-extrabold text-lg leading-tight">${escapeHtml(s.name)}</h3>
+            <p class="text-xs text-slate-500">${escapeHtml(s.category || "Shopping")}${s.network ? " · " + escapeHtml(s.network) : ""}</p>
+          </div>
+          <span class="reward-pill ml-auto whitespace-nowrap">Up to ${escapeHtml(s.commissionPct)}% back</span>
         </div>
-        <p class="text-sm text-slate-500 mt-1">${escapeHtml(s.category || "Shopping")}</p>
-        <p class="text-sm font-bold text-violet-600 mt-3">Shop now →</p>
+        ${s.desc ? `<p class="text-sm text-slate-600 mt-3">${escapeHtml(s.desc)}</p>` : ""}
+        <div class="flex items-center justify-between mt-3">
+          <p class="text-sm font-bold text-violet-600">Shop now →</p>
+          ${s.badge ? `<span class="text-xs font-bold text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">${escapeHtml(s.badge)}</span>` : ""}
+        </div>
       </a>`).join("");
     host.querySelectorAll("[data-store]").forEach((el) => {
       el.addEventListener("click", () => {
