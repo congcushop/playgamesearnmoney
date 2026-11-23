@@ -26,6 +26,12 @@
       n.classList.remove("hidden");
     }
     const next = params.get("next") || "earn.html";
+    // BUG FIX (23/11): a signed-in user clicking a "Start earning" CTA
+    // landed on this login form instead of earning. If a session already
+    // exists, skip the form and go straight to the destination.
+    if (window.PGEM && window.PGEM.refreshSession) {
+      window.PGEM.refreshSession().then((u) => { if (u) window.location.href = next; }).catch(() => {});
+    }
     setMode(params.get("mode") === "signup" ? "signup" : "login");
     $("#tab-login").addEventListener("click", () => setMode("login"));
     $("#tab-signup").addEventListener("click", () => setMode("signup"));

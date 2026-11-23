@@ -65,8 +65,16 @@
       // it injects an iframe in-page, never a popup.) Open the tab
       // synchronously first, then point it at the router URL once the
       // edge function returns it.
+      //
+      // BUG FIX 2 (23/11, re-test #3): the open call MUST NOT use
+      // "noopener" — WebKit-based browsers return null for
+      // window.open(..., "noopener") while STILL opening the blank tab,
+      // so the code below fell into the same-tab fallback and navigated
+      // the ORIGINAL surveys tab to the router, orphaning the blank tab.
+      // Without noopener every browser returns a real reference to the
+      // new tab, so exactly one tab opens and THAT tab gets the router.
       trBtn.disabled = true; trBtn.textContent = "Loading TheoremReach…";
-      const win = window.open("", "_blank", "noopener");
+      const win = window.open("about:blank", "_blank");
       // ROOT-CAUSE FIX (23/11): callFn used to throw on network/CORS
       // failure and this handler had no catch, so a throw left the
       // button disabled on "Loading…" forever and the blank tab

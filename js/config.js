@@ -52,9 +52,11 @@ window.PGEM_CONFIG = {
     minWithdrawPaypalUsd: 10,
     minWithdrawCryptoUsd: 3,
     signupBonusCoins: 250,    // $0.25 — LOCKED until first offer completes
-    checkinBaseCoins: 50,     // daily check-in base
-    checkinStreakBonus: 10,   // +10 per consecutive day, cap below
-    checkinMaxCoins: 100,
+    // NOTE: check-in amounts are NOT configured here — the server-side
+    // claim_checkin RPC pays them (game: 50 + 10/streak-day, cap 100).
+    // The old checkinBaseCoins / checkinStreakBonus / checkinMaxCoins
+    // keys were removed 23/11: nothing read them, and a stale local
+    // number must never disagree with what the server actually pays.
     musicCoinsPerSession: 5,  // music zone: 5 coins / 15 min, cap below
     musicDailyCapCoins: 20,
     referralRate: 0.10,       // referrer earns 10% of referral's offer earnings
