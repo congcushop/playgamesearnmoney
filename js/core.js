@@ -60,6 +60,11 @@
   window.PGEM.deviceFingerprint = deviceFingerprint;
 
   // --- Auth -------------------------------------------------------------------
+  // Session state: null = unknown (still loading), user object / null = known.
+  // The header must NOT render the logged-out links until the session is
+  // known — otherwise every page flickers "Log in" for a second.
+  let sessionReady = false;
+
   async function refreshSession() {
     if (!sb) return null;
     const { data } = await sb.auth.getSession();
@@ -70,32 +75,57 @@
       try {
         const pending = localStorage.getItem("pgem_pending_ref");
         if (pending) {
-          const { error } = await sb.rpc("gpt_apply_referral", { p_user_id: window.PGEM.user.id, p_code: pending });
+          const { error } = await sb.rpc("apply_referral", { p_user_id: window.PGEM.user.id, p_code: pending });
           if (!error) localStorage.removeItem("pgem_pending_ref");
         }
       } catch (e) { /* storage unavailable — referral code already lost, not fatal */ }
     }
+    sessionReady = true;
     renderAuthArea();
     return window.PGEM.user;
   }
 
   async function loadProfile() {
     if (!sb || !window.PGEM.user) return;
-    const { data } = await sb.from("gpt_profiles").select("*").eq("id", window.PGEM.user.id).single();
+    // Canonical table is `profiles` (created by the auth.users trigger).
+    // A missing row must NOT block the balance: load it regardless.
+    const { data } = await sb.from("profiles").select("*").eq("id", window.PGEM.user.id).maybeSingle();
     window.PGEM.profile = data || null;
-    if (data) await loadBalance();
+    await loadBalance();
   }
 
   async function loadBalance() {
     if (!sb || !window.PGEM.user) return;
-    const { data, error } = await sb.rpc("gpt_balance", { p_user_id: window.PGEM.user.id });
-    if (!error && data) {
-      window.PGEM.balance = data;
-      $$("[data-balance-coins]").forEach((el) => (el.textContent = fmtCoins(data.available_coins)));
-      $$("[data-balance-usd]").forEach((el) => (el.textContent = coinsToUsd(data.available_coins)));
-      $$("[data-level-name]").forEach((el) => (el.textContent = data.level_name || "Rookie"));
-      $$("[data-level-max]").forEach((el) => (el.textContent = "$" + (data.max_withdraw_usd || 10)));
+    // Canonical derived view: balance + lifetime + level + offers in ONE
+    // query (needs GRANT SELECT on user_balances — see shared SQL fix).
+    const { data, error } = await sb.from("user_balances")
+      .select("balance_coins, lifetime_coins_earned, level, offers_completed")
+      .eq("user_id", window.PGEM.user.id)
+      .maybeSingle();
+    if (error || !data) {
+      // No view row yet (profile still being created) — show real zeros,
+      // not a stuck "…".
+      window.PGEM.balance = {
+        available_coins: 0, locked_coins: 0, lifetime_earned_usd: 0,
+        offers_completed: 0, level: 1, level_name: "Rookie", max_withdraw_usd: 10,
+      };
+    } else {
+      const lvl = CFG.coins.levels.find((l) => l.level === (data.level || 1)) || CFG.coins.levels[0];
+      window.PGEM.balance = {
+        available_coins: Number(data.balance_coins || 0),
+        locked_coins: 0, // signup bonus credits only after the first offer
+        lifetime_earned_usd: Number(data.lifetime_coins_earned || 0) / CFG.coins.perDollar,
+        offers_completed: Number(data.offers_completed || 0),
+        level: data.level || 1,
+        level_name: lvl.name,
+        max_withdraw_usd: lvl.maxWithdrawUsd,
+      };
     }
+    const b = window.PGEM.balance;
+    $$("[data-balance-coins]").forEach((el) => (el.textContent = fmtCoins(b.available_coins)));
+    $$("[data-balance-usd]").forEach((el) => (el.textContent = coinsToUsd(b.available_coins)));
+    $$("[data-level-name]").forEach((el) => (el.textContent = b.level_name || "Rookie"));
+    $$("[data-level-max]").forEach((el) => (el.textContent = "$" + (b.max_withdraw_usd || 10)));
   }
   window.PGEM.loadBalance = loadBalance;
 
@@ -104,7 +134,7 @@
     const fp = await deviceFingerprint();
     const { data, error } = await sb.auth.signUp({
       email, password,
-      options: { data: { device_fingerprint: fp, ref_code: refCode || null } },
+      options: { data: { device_fingerprint: fp, ref_code: refCode || null, site: "game" } },
     });
     if (error) return { error: error.message };
     // Referral is applied server-side via RPC after the profile exists.
@@ -112,7 +142,7 @@
     // RPC (authenticated-only) fails — keep the code and apply it on the
     // next successful sign-in (see refreshSession below).
     if (refCode && data.user) {
-      const { error: refErr } = await sb.rpc("gpt_apply_referral", { p_user_id: data.user.id, p_code: refCode });
+      const { error: refErr } = await sb.rpc("apply_referral", { p_user_id: data.user.id, p_code: refCode });
       if (refErr) { try { localStorage.setItem("pgem_pending_ref", refCode); } catch (e) {} }
     }
     return { data };
@@ -182,7 +212,9 @@
           <a class="hover:text-violet-600" href="referrals.html">Referrals</a>
         </nav>
         <div class="ml-auto flex items-center gap-2">
-          ${u ? `
+          ${!sessionReady ? `
+            <span class="text-sm text-slate-400 px-3 py-1.5">…</span>`
+          : u ? `
             <a href="wallet.html" class="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-full px-3 py-1.5 text-sm font-semibold text-violet-700">
               <span>🪙</span><span data-balance-coins>${b ? fmtCoins(b.available_coins) : "…"}</span>
               <span class="text-violet-400 font-normal">($<span data-balance-usd>${b ? coinsToUsd(b.available_coins) : "…"}</span>)</span>
@@ -363,21 +395,60 @@
   window.PGEM.maybeAskPush = maybeAskPush;
 
   // --- Daily check-in -------------------------------------------------------------
+  // Server-side via the claim_checkin RPC (SECURITY DEFINER): one row per
+  // user per day, streak-aware, amounts locked server-side. The client
+  // NEVER writes to the ledger directly.
   async function doCheckin() {
     if (!sb) { toast("Check-in needs an account — please log in first.", false); return null; }
-    const r = await callFn("daily-checkin", {});
-    if (r.error) { toast("Check-in failed: " + r.error, false); return null; }
-    toast("Checked in! +" + r.coins + " coins (streak " + r.streak + " days).");
+    if (!window.PGEM.user) { toast("Please log in first.", false); return null; }
+    let r;
+    try {
+      const res = await sb.rpc("claim_checkin", { p_site: "game" });
+      if (res.error) { toast("Check-in failed: " + res.error.message, false); return null; }
+      r = res.data;
+    } catch (e) {
+      toast("Check-in failed: " + (e && e.message ? e.message : "network error"), false);
+      return null;
+    }
+    if (r && r.already) {
+      toast("Already checked in today — come back tomorrow! (streak " + (r.streak || 1) + " days)");
+    } else {
+      toast("Checked in! +" + (r ? r.coins : 0) + " coins (streak " + (r ? r.streak : 1) + " days).");
+    }
     await loadBalance();
+    await refreshCheckinState();
     return r;
   }
   window.PGEM.doCheckin = doCheckin;
 
+  // Grey out the check-in button when today is already claimed, so the
+  // page never shows a live "Check in" button next to an "already done"
+  // message. Runs after the session is known.
+  async function refreshCheckinState() {
+    const btn = $("#checkin-btn");
+    if (!btn || !sb || !window.PGEM.user) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const { data } = await sb.from("daily_checkins")
+      .select("coins_awarded, streak").eq("user_id", window.PGEM.user.id)
+      .eq("checkin_date", today).maybeSingle();
+    if (data) {
+      btn.disabled = true;
+      btn.textContent = "Checked in ✓ +" + data.coins_awarded + " coins";
+    } else {
+      btn.disabled = false;
+      btn.textContent = "Check in +" + CFG.coins.checkinBaseCoins + " 🪙";
+    }
+  }
+  window.PGEM.refreshCheckinState = refreshCheckinState;
+
   // --- Boot -----------------------------------------------------------------------
+  // Session FIRST, header second: the header must never show the logged-out
+  // links to a logged-in user (or vice versa) while the session loads.
   document.addEventListener("DOMContentLoaded", async () => {
-    renderHeader();
+    renderHeader(); // loading state ("…") until the session is known
     renderFooter();
     await refreshSession();
+    if (window.PGEM.user) await refreshCheckinState();
     loadAds();
     maybeAskPush();
     const btn = $("#checkin-btn");

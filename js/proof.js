@@ -18,8 +18,11 @@
         </div>`;
       return;
     }
-    const { data, error } = await sb.rpc("gpt_payout_proofs");
-    const proofs = data && data.proofs ? data.proofs : [];
+    // Canonical table: payout_proofs (public read). Totals computed here.
+    const { data, error } = await sb.from("payout_proofs")
+      .select("display_name,amount_usd,method,paid_at")
+      .order("paid_at", { ascending: false }).limit(50);
+    const proofs = data || [];
     if (error || !proofs.length) {
       host.innerHTML = `
         <div class="earn-card p-6 text-center">
@@ -34,14 +37,16 @@
       $("#proof-biggest").textContent = "$0";
       return;
     }
-    $("#proof-total-paid").textContent = "$" + Number(data.total_paid_usd || 0).toFixed(2);
-    $("#proof-count").textContent = String(data.count || proofs.length);
-    $("#proof-biggest").textContent = "$" + Number(data.biggest_usd || 0).toFixed(2);
+    const totalPaid = proofs.reduce((a, w) => a + Number(w.amount_usd || 0), 0);
+    const biggest = proofs.reduce((m, w) => Math.max(m, Number(w.amount_usd || 0)), 0);
+    $("#proof-total-paid").textContent = "$" + totalPaid.toFixed(2);
+    $("#proof-count").textContent = String(proofs.length);
+    $("#proof-biggest").textContent = "$" + biggest.toFixed(2);
     host.innerHTML = proofs.map((w) => `
       <div class="earn-card p-4 flex items-center gap-3">
         <span class="text-2xl">${w.method === "paypal" ? "💙" : "₿"}</span>
         <div class="flex-1">
-          <p class="font-extrabold">${w.username} withdrew <span class="text-emerald-600">$${Number(w.amount_usd).toFixed(2)}</span></p>
+          <p class="font-extrabold">${w.display_name} withdrew <span class="text-emerald-600">$${Number(w.amount_usd).toFixed(2)}</span></p>
           <p class="text-xs text-slate-400">via ${w.method === "paypal" ? "PayPal" : "crypto"} · ${new Date(w.paid_at).toLocaleDateString("en-US")}</p>
         </div>
         <span class="reward-pill">✓ Paid</span>

@@ -29,9 +29,9 @@
     // Today's count (for display only — the server enforces the cap).
     const sb = window.PGEM.sb;
     const today = new Date().toISOString().slice(0, 10);
-    const { data } = await sb.from("gpt_coin_transactions")
+    const { data } = await sb.from("coin_transactions")
       .select("id", { count: "exact" })
-      .eq("user_id", user.id).eq("type", "rewarded_video")
+      .eq("user_id", user.id).eq("source", "rewarded_video")
       .gte("created_at", today + "T00:00:00Z");
     const used = (data && data.length) || 0;
     count.textContent = "Watched today: " + used + " / " + rv.maxViewsPerDay;

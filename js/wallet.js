@@ -40,26 +40,29 @@
       "Your first withdrawal is held " + CFG.coins.firstWithdrawHoldHours + "h for a fraud check. " +
       "New accounts can withdraw up to $" + lp.cur.maxWithdrawUsd + " at a time; your limit grows as you level up.";
 
-    // Transactions
-    const { data: txs } = await sb.from("gpt_coin_transactions")
-      .select("amount_coins,type,source,offer_name,created_at,status")
+    // Transactions — canonical append-only ledger (coin_transactions).
+    const { data: txs } = await sb.from("coin_transactions")
+      .select("amount_coins,source,meta,created_at")
       .eq("user_id", user.id).order("created_at", { ascending: false }).limit(50);
     const txHost = $("#tx-list");
     if (!txs || !txs.length) {
       txHost.innerHTML = '<p class="text-slate-500 text-sm">No transactions yet. Complete your first offer to see it here.</p>';
     } else {
-      txHost.innerHTML = txs.map((t) => `
+      txHost.innerHTML = txs.map((t) => {
+        const label = (t.meta && t.meta.offer) ? t.meta.offer : sourceLabel(t.source);
+        return `
         <div class="flex justify-between py-2 border-b border-slate-100 text-sm">
-          <div><span class="font-medium">${escapeHtml(t.offer_name || t.type)}</span>
-            <span class="text-slate-400"> · ${escapeHtml(t.source || "")}${t.status === "locked" ? " · locked" : ""}</span></div>
+          <div><span class="font-medium">${escapeHtml(label)}</span>
+            <span class="text-slate-400"> · ${escapeHtml(t.source || "")}</span></div>
           <div class="text-right"><span class="${t.amount_coins >= 0 ? "text-emerald-600" : "text-red-600"} font-semibold">${t.amount_coins >= 0 ? "+" : ""}${window.PGEM.fmtCoins(t.amount_coins)}</span>
           <div class="text-xs text-slate-400">${new Date(t.created_at).toLocaleDateString("en-US")}</div></div>
-        </div>`).join("");
+        </div>`;
+      }).join("");
     }
 
-    // Withdrawals
-    const { data: wds } = await sb.from("gpt_withdrawals")
-      .select("amount_usd,method,status,created_at,hold_until,payout_batch")
+    // Withdrawals — canonical table (no hold_until / payout_batch columns).
+    const { data: wds } = await sb.from("withdrawals")
+      .select("amount_usd,method,status,created_at")
       .eq("user_id", user.id).order("created_at", { ascending: false }).limit(20);
     const wdHost = $("#wd-list");
     if (!wds || !wds.length) {
@@ -100,14 +103,39 @@
       if (amount < minUsd) { window.PGEM.toast("Minimum withdrawal is $" + minUsd + " via " + (methodSel.value === "paypal" ? "PayPal" : "crypto") + ".", false); return; }
       if (amount > lp.cur.maxWithdrawUsd) { window.PGEM.toast("Your level (" + lp.cur.name + ") allows up to $" + lp.cur.maxWithdrawUsd + " per withdrawal. Level up to withdraw more.", false); return; }
       if (!dest) { window.PGEM.toast("Enter your payout destination.", false); return; }
-      const r = await window.PGEM.callFn("request-withdrawal", {
-        method: methodSel.value, amount_usd: amount, destination: dest,
+      const balanceCoins = (window.PGEM.balance && window.PGEM.balance.available_coins) || 0;
+      if (amount * CFG.coins.perDollar > balanceCoins) { window.PGEM.toast("Not enough coins yet — you have $" + window.PGEM.coinsToUsd(balanceCoins) + ".", false); return; }
+      // Direct insert into the canonical withdrawals table (RLS policy
+      // "own withdrawals insert" + GRANT INSERT — see shared SQL fix).
+      // No request-withdrawal Edge Function exists in the shared project.
+      const { data: prior } = await sb.from("withdrawals").select("id")
+        .eq("user_id", user.id).limit(1);
+      const { error } = await sb.from("withdrawals").insert({
+        user_id: user.id,
+        amount_coins: Math.round(amount * CFG.coins.perDollar),
+        amount_usd: amount,
+        method: methodSel.value,
+        payout_address: dest,
+        status: "pending",
+        is_first: !(prior && prior.length),
       });
-      if (r.error) { window.PGEM.toast("Withdrawal request failed: " + r.error, false); return; }
-      window.PGEM.toast("Request received. It will be reviewed and paid in the next batch (" + r.payout_batch + ").");
+      if (error) { window.PGEM.toast("Withdrawal request failed: " + error.message, false); return; }
+      window.PGEM.toast("Request received. It will be reviewed and paid in the next batch (Tue/Fri).");
       form.reset(); syncMethod();
+      await window.PGEM.loadBalance();
       setTimeout(() => location.reload(), 1200);
     });
+  }
+
+  function sourceLabel(source) {
+    return {
+      offerwall_gg: "Offerwall offer", adgem: "AdGem offer",
+      cpx: "CPX survey", theoremreach: "TheoremReach survey",
+      checkin: "Daily check-in", signup_bonus: "Signup bonus",
+      referral: "Referral earnings", cashback: "Cashback",
+      rewarded_video: "Rewarded video", music: "Music session",
+      withdrawal: "Withdrawal",
+    }[source] || (source || "Transaction");
   }
 
   function escapeHtml(s) {

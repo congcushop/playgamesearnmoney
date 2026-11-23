@@ -32,7 +32,7 @@ window.PGEM_CONFIG = {
   supabase: {
     url: "https://hqkjcwjqxhbhenvanteu.supabase.co",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxa2pjd2pxeGhiaGVudmFudGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzODUxMjEsImV4cCI6MjExMDk2MTEyMX0.y_J73wKX30ZSkB6iXtLpm5dvB3P_jpbHJOQzdC4rbGY",
-    functionsUrl: "https://YOUR-PROJECT.supabase.co/functions/v1",
+    functionsUrl: "https://hqkjcwjqxhbhenvanteu.supabase.co/functions/v1",
   },
 
   // --- Anti-fraud (Turnstile) ----------------------------------------------
