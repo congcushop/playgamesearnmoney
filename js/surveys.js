@@ -25,8 +25,18 @@
         return;
       }
       cpxBtn.disabled = true; cpxBtn.textContent = "Loading CPX…";
-      const r = await window.PGEM.callFn("survey-url", { router: "cpx" });
-      if (r.error || !r.url) {
+      // ROOT-CAUSE FIX (23/11): callFn used to throw on network/CORS
+      // failure and this handler had no catch, so the button stayed
+      // disabled on "Loading CPX…" forever. callFn now returns
+      // { error } instead of throwing, but the try/catch stays as a
+      // second layer — the button MUST reset on every path.
+      let r;
+      try {
+        r = await window.PGEM.callFn("survey-url", { router: "cpx" });
+      } catch (e) {
+        r = { error: "network_error" };
+      }
+      if (!r || r.error || !r.url) {
         window.PGEM.toast("Could not open CPX right now: " + (r.error || "unknown error"), false);
         cpxBtn.disabled = false; cpxBtn.textContent = "Open CPX surveys →";
         return;
@@ -57,10 +67,21 @@
       // edge function returns it.
       trBtn.disabled = true; trBtn.textContent = "Loading TheoremReach…";
       const win = window.open("", "_blank", "noopener");
-      const r = await window.PGEM.callFn("survey-url", { router: "theoremreach" });
-      if (r.error || !r.url) {
+      // ROOT-CAUSE FIX (23/11): callFn used to throw on network/CORS
+      // failure and this handler had no catch, so a throw left the
+      // button disabled on "Loading…" forever and the blank tab
+      // orphaned. callFn now returns { error } instead of throwing,
+      // but the try/catch stays as a second layer — on ANY failure
+      // the blank tab is closed and the button resets.
+      let r;
+      try {
+        r = await window.PGEM.callFn("survey-url", { router: "theoremreach" });
+      } catch (e) {
+        r = { error: "network_error" };
+      }
+      if (!r || r.error || !r.url) {
         if (win) win.close();
-        window.PGEM.toast("Could not open TheoremReach right now: " + (r.error || "unknown error"), false);
+        window.PGEM.toast("Could not open TheoremReach right now: " + ((r && r.error) || "unknown error"), false);
         trBtn.disabled = false; trBtn.textContent = "Open TheoremReach surveys →";
         return;
       }

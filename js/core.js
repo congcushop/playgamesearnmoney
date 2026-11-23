@@ -180,21 +180,41 @@
   window.PGEM.requireAuth = requireAuth;
 
   // --- Edge Function caller ----------------------------------------------------
+  // ROOT-CAUSE FIX (23/11): this used to (a) have NO timeout — a hung
+  // request left the caller awaiting forever — and (b) THROW on any
+  // network/CORS failure, which no caller caught, so the button that
+  // triggered the call stayed disabled forever (TheoremReach: blank tab
+  // opened, then stuck on "Loading…" with no reset and no error). It
+  // now NEVER throws and NEVER hangs: timeout 20s, every failure comes
+  // back as { error } for the caller to handle and reset its own UI.
   async function callFn(name, body) {
     if (!sb) return { error: "not_configured" };
-    const { data: { session } } = await sb.auth.getSession();
-    const res = await fetch(CFG.supabase.functionsUrl + "/" + name, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        apikey: CFG.supabase.anonKey,
-        Authorization: "Bearer " + (session ? session.access_token : CFG.supabase.anonKey),
-      },
-      body: JSON.stringify(body || {}),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) return { error: json.error || ("http_" + res.status), detail: json };
-    return json;
+    let session = null;
+    try {
+      const { data } = await sb.auth.getSession();
+      session = (data && data.session) || null;
+    } catch (e) { /* fall through — anon key still authenticates the call */ }
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      const res = await fetch(CFG.supabase.functionsUrl + "/" + name, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: CFG.supabase.anonKey,
+          Authorization: "Bearer " + (session ? session.access_token : CFG.supabase.anonKey),
+        },
+        body: JSON.stringify(body || {}),
+        signal: ctrl.signal,
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) return { error: json.error || ("http_" + res.status), detail: json };
+      return json;
+    } catch (e) {
+      return { error: e && e.name === "AbortError" ? "timeout" : "network_error" };
+    } finally {
+      clearTimeout(timer);
+    }
   }
   window.PGEM.callFn = callFn;
 

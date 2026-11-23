@@ -64,8 +64,17 @@
 
     claimBtn.addEventListener("click", async () => {
       claimBtn.disabled = true;
-      const r = await window.PGEM.callFn("music-claim", { started_at: new Date(sessionStart).toISOString() });
-      if (r.error) { window.PGEM.toast("Claim failed: " + r.error, false); claimBtn.disabled = false; return; }
+      // ROOT-CAUSE FIX (23/11): same uncaught-throw flaw as surveys.js —
+      // a callFn throw used to leave the claim button disabled forever.
+      // callFn now returns { error } instead of throwing; the try/catch
+      // stays as a second layer so the button always recovers.
+      let r;
+      try {
+        r = await window.PGEM.callFn("music-claim", { started_at: new Date(sessionStart).toISOString() });
+      } catch (e) {
+        r = { error: "network_error" };
+      }
+      if (!r || r.error) { window.PGEM.toast("Claim failed: " + ((r && r.error) || "network_error"), false); claimBtn.disabled = false; return; }
       window.PGEM.toast("+" + r.coins + " coins! (" + r.claimed_today + "/" + (CFG.coins.musicDailyCapCoins / CFG.coins.musicCoinsPerSession) + " sessions today)");
       await window.PGEM.loadBalance();
       sessionStart = null; startBtn.disabled = false; startBtn.textContent = "Start a 15-min session";
