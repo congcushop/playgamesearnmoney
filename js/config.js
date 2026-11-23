@@ -30,8 +30,8 @@ window.PGEM_CONFIG = {
   // Fill after creating the project (see README.md "Backend setup").
   // A NEW Supabase project is recommended (isolation from CongCuShop).
   supabase: {
-    url: "https://YOUR-PROJECT.supabase.co",
-    anonKey: "YOUR-SUPABASE-ANON-KEY",
+    url: "https://hqkjcwjqxhbhenvanteu.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxa2pjd2pxeGhiaGVudmFudGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzODUxMjEsImV4cCI6MjExMDk2MTEyMX0.y_J73wKX30ZSkB6iXtLpm5dvB3P_jpbHJOQzdC4rbGY",
     functionsUrl: "https://YOUR-PROJECT.supabase.co/functions/v1",
   },
 
@@ -71,7 +71,7 @@ window.PGEM_CONFIG = {
 
   // --- Offerwalls ------------------------------------------------------------
   // Offerwall.GG: iframe https://offerwall.gg/wall/YOUR_KEY?userId={userId}
-  //   Postback: GET {SUPABASE_URL}/functions/v1/offerwall-postback?network=offerwallgg
+  //   Postback: GET {SUPABASE_URL}/functions/v1/offerwall-postback?network=offerwall_gg
   //   with params user, tx, amount, sig = HMAC-SHA256("user:tx:amount", SECRET)
   //   Set placement rate = 600 coins per $1 (see coins above).
   //   Site verification: meta tag / file / DNS — see README.md.
