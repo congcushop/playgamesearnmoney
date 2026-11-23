@@ -77,7 +77,7 @@ window.PGEM_CONFIG = {
   //   Site verification: meta tag / file / DNS — see README.md.
   offerwallGg: {
     status: "pending-account",
-    placementKey: "",           // YOUR_KEY from the Offerwall.GG dashboard
+    placementKey: "5cdd431f1439b328ed3d0da1e0990f2a", // YOUR_KEY from the Offerwall.GG dashboard
     postbackSecretEnv: "OFFERWALL_GG_SECRET", // Supabase secret name
   },
   // AdGem: Web Offerwall URL comes from the dashboard per Property.
